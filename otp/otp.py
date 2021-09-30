@@ -6,9 +6,11 @@ import argparse
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-k", "--key", required=True,
-	help="key file - hex string >= length of message")
+	help="key file - string >= length of message")
 ap.add_argument("-m", "--message", required=True,
 	help="text file to xor with the key")
+ap.add_argument("-o", "--outputFile", default='output.txt',
+	help="name of file to write output string to")
 args = vars(ap.parse_args())
 
 
@@ -24,21 +26,19 @@ with open(args["message"]) as msg_file:
 xord = []
 
 for x in range(len(msg)):
+    # get the ascii integer for the character in each
     m = ord(msg[x])
     k = ord(key[x])
+    # xor the integers and convert back to a character
     out = chr(m ^ k)
+    # add the character to the output list
     xord.append(out)
 
+# join the output list into a single string and write it out to file
 output = ''.join(xord)
 
-with open('output.txt', 'w') as out_file:
+with open(args["outputFile"], 'w') as out_file:
     out_file.write(output)
 
 
-# with bob as a hex string
-# split1 = ['0x' + bob[i:i+2] for i in range(0, len(bob), 2)]
-# will provide put it in a list with 0x prefix
-# then
-# split2 = [chr(int(x, 16)) for x in split1]
-# converts each hex string to its char
 
