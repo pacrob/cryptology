@@ -63,12 +63,37 @@ Implement "Change Password"
 Input: username + old password + new password + JSON holding all current accounts.
 Output: modified JSON file or "user exists" exception.
 '''
-# TODO
+def change_password(username, old_password, new_password):
+
+    if username not in users.keys():
+        return "incorrect user info"
+
+    try:
+        pwd_correct = argon2Hasher.verify(users[username], old_password)
+    except VerifyMismatchError as err:
+        return "incorrect user info"
+
+    if pwd_correct:
+        user_hash = argon2Hasher.hash(new_password)
+        users[username] = user_hash
+        return "password updated" 
+
+    else:
+        return "i don't know what happened"
+    
 '''
 Implement "Reset Password"
 Input: username + new password + JSON holding all current accounts.
 Output: modified JSON file or "user exists" exception.
 '''
-# TODO
+def reset_password(username, new_password):
+    if username not in users.keys():
+        return "user not found"
+
+
+    user_hash = argon2Hasher.hash(new_password)
+    users[username] = user_hash
+    return "password updated" 
+
 
 
