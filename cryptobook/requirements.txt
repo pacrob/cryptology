@@ -1,3 +1,5 @@
 ipython
 argon2_cffi
 pytest
+pyaes
+pbkdf2
