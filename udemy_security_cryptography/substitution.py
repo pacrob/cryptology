@@ -4,9 +4,13 @@ import string
 
 def generate_key():
     alphas = string.ascii_lowercase
-    key = random.shuffle(list(alphas))
-    # right here - need to return a dict as the key, not list
-    for x in range
+    
+    alphas = string.ascii_lowercase
+    my_alphas = list(alphas[:])  # Making a copy of the string as a list
+    random.shuffle(my_alphas)
+    substitution = my_alphas
+
+    key = {alphas[i]: substitution[i] for i in range(len(alphas))}
     return key
 
 
@@ -15,51 +19,34 @@ def encode(key, message):
     message = message.lower().strip()
     for letter in message:
         if letter.isalpha():
-            num = ord(letter)
-            num = num + offset
-            if num > ord("z"):
-                num = num - 26
-
-            encoded += chr(num)
+            encoded += key[letter]
         else:
             encoded += letter
-
     return encoded
 
 
-def decode(offset, message):
+def decode(key, message):
     decoded = ""
     message = message.lower().strip()
+    inverse_key = {v: k for k, v in key.items()}
     for letter in message:
         if letter.isalpha():
-            num = ord(letter)
-            num = num - offset
-            if num < ord("a"):
-                num = num + 26
-
-            decoded += chr(num)
+            decoded += inverse_key[letter]
         else:
             decoded += letter
 
     return decoded
 
 @click.command()
-@click.argument('offset', type=int)
 @click.argument('message', type=str)
-@click.option('-e', 'operation', flag_value='encode', help='Encode the message')
-@click.option('-d', 'operation', flag_value='decode', help='Decode the message')
-def main(offset, message, operation):
+def main(message):
     """A simple CLI tool to encode or decode a message with a given offset."""
-    offset = offset % 26
-
-    if operation == 'encode':
-        result = encode(offset, message)
-        click.echo(f'Encoded message with offset {offset}: {result}')
-    elif operation == 'decode':
-        result = decode(offset, message)
-        click.echo(f'Decoded message with offset {offset}: {result}')
-    else:
-        click.echo('Please provide either -e for encode or -d for decode.')
+    key = generate_key()
+    encoded = encode(key, message)
+    decoded = decode(key, encoded)    
+    print(f"Key: {key}")
+    print(f"Encoded: {encoded}")
+    print(f"Decoded: {decoded}")
 
 if __name__ == '__main__':
     main()
