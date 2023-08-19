@@ -12,12 +12,7 @@ letter_frequency = {
 
 letter_frequency_sorted = sorted(letter_frequency.items(), key=lambda x: x[1], reverse=True)
 
-
-@click.command()
-@click.argument('message', type=str)
-def main(message):
-
-    message = message.lower().strip()
+def generate_letter_frequency(message):
     letter_count = {}
     for letter in message:
         if letter.isalpha():
@@ -26,9 +21,27 @@ def main(message):
             else:
                 letter_count[letter] = 1
 
-    message_letter_freq = {}
+    letter_freq = {}
     for letter in letter_count:
-        message_letter_freq[letter] = letter_count[letter] / len(message) * 100
+        letter_freq[letter] = letter_count[letter] / len(message) * 100
+
+    return letter_freq
+
+
+# @click.command()
+# @click.argument('message', type=str)
+# def main(message):
+def main():
+
+    original = "either the well was very deep, or she fell very slowly, for she had plenty of time as she went down to look about her, and to wonder what was going to happen next. first, she tried to look down and make out what she was coming to, but it was too dark to see anything; then she looked at the sides of the well, and noticed that they were filled with cupboards and book-shelves: here and there she saw maps and pictures hung upon pegs. she took down a jar from one of the shelves as she passed; it was labelled 'orange marmalade,' but to her great disappointment it was empty: she did not like to drop the jar for fear of killing somebody underneath, so managed to put it into one of the cupboards as she fell past it"
+    message = "okwcog wco fouu fya vogm doos, zg aco iouu vogm auzfum, izg aco cyd suolwm zi wkeo ya aco folw dzfl wz uzzq ybztw cog, yld wz fzldog fcyw fya rzklr wz cyssol lonw. ikgaw, aco wgkod wz uzzq dzfl yld eyqo ztw fcyw aco fya pzeklr wz, btw kw fya wzz dygq wz aoo ylmwcklr; wcol aco uzzqod yw wco akdoa zi wco fouu, yld lzwkpod wcyw wcom fogo ikuuod fkwc ptsbzygda yld bzzq-acouvoa: cogo yld wcogo aco ayf eysa yld skpwtgoa ctlr tszl sora. aco wzzq dzfl y xyg igze zlo zi wco acouvoa ya aco syaaod; kw fya uybouuod 'zgylro eygeyuydo,' btw wz cog rgoyw dkaysszklweolw kw fya oeswm: aco dkd lzw ukqo wz dgzs wco xyg izg ioyg zi qkuuklr azeobzdm tldogloywc, az eylyrod wz stw kw klwz zlo zi wco ptsbzygda ya aco iouu syaw kw"
+    # message = message.lower().strip()
+
+    message_letter_freq = generate_letter_frequency(message)
+    original_letter_freq = generate_letter_frequency(original)
+
+    # print(f"Original letter frequency: {original_letter_freq}") 
+    # print(f"Message letter frequency: {message_letter_freq}")
 
     all_alphas = string.ascii_lowercase
     for letter in all_alphas:
@@ -36,13 +49,16 @@ def main(message):
             message_letter_freq[letter] = 0
             
     message_letter_freq_sorted = sorted(message_letter_freq.items(), key=lambda x: x[1], reverse=True)
+    original_letter_freq_sorted = sorted(original_letter_freq.items(), key=lambda x: x[1], reverse=True)
+
+    decode_dict = {}
+    for i in range(len(message_letter_freq_sorted)):
+        decode_dict[message_letter_freq_sorted[i][0]] = letter_frequency_sorted[i][0]
 
     decoded_message = ""
     for letter in message:
         if letter.isalpha():
-            for i in range(len(letter_frequency_sorted)):
-                if letter == letter_frequency_sorted[i][0]:
-                    decoded_message += message_letter_freq_sorted[i][0]
+            decoded_message += decode_dict[letter]
         else:
             decoded_message += letter
 
